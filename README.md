@@ -106,7 +106,7 @@ asyncio.run(main())
 This section describes how to unstake.
 
 ### Overview
-To unstake user needs to send message with `OP::BURN` to its wallet and specify amount of bmTON to burn. The TL-B scheme of burn request is following:
+To unstake user needs to send message with `OP::BURN` to its **Jetton Wallet** and specify amount of bmTON to burn. The TL-B scheme of burn request is following:
 
 ```
 burn#595f07bc query_id:uint64 jetton_amount:Coins receiver_address:MsgAddressInt forward_payload:(Maybe ^Cell) = InternalMsgBody;
@@ -119,7 +119,7 @@ burn_notification#7bdd97de query_id:uint64 withdraw_jetton_amount:Coins owner_ad
 ```
 
 After **Unstake Request** is deployed, anyone can send message to it. Contract checks that unlock timestamp has passed and if everything is correct
-it sends message to **Financial** with `OP::UNSTAKE`, ton amount, jetton amount and user address. The TL-B scheme of this message is following:
+it sends message to **Financial** with `OP::UNSTAKE`, ton amount, jetton amount (currently unused) and user address. The TL-B scheme of this message is following:
 
 ```
 unstake#492ab1b3 index:uint64 owner:MsgAddressInt ton_amount:Coins jetton_amount:Coins forward_payload:(Maybe ^Cell) = InternalMsgBody;
@@ -143,7 +143,7 @@ This section describes how to tarck unstake requests.
 
 1. **Monitor Events on the Blockchain**
 The unstake request process typically involves sending a transaction to the smart contract that initiates the unstaking. The contract may emit events (messages) related to the unstake request, which can be tracked on the blockchain. Look for events such as:
-- `OP::UNSTAKE`: When the **Unstake Request** is initiated, a message with the `OP::UNSTAKE` operation code will be sent. This message will contain details about the unstake request, such as the amount of TON and bmTON to be unstaked, the owner's address, and the index of the request.
+- `OP::UNSTAKE`: When the **Unstake Request** is initiated, a message with the `OP::UNSTAKE` operation code will be sent. This message will contain details about the unstake request, such as the amount of TON and jettons (currently unused) to be unstaked, the owner's address, and the index of the request.
 
 2. **Invoke `get_unstake_data()` method in Unstake Request contract.**
 By invoking this method you can retrieve the details of an unstake request. When **Unstake Request** sends message to **Financial** with `OP::UNSTAKE` it sets `unlock_timestamp` equal to `0`.
@@ -271,12 +271,12 @@ _ jetton_total_supply:Coins ton_total_supply:Coins commission_total_supply:Coins
 - `OP::UNSTAKE`
     ##### TL-B scheme:
     ```
-    unstake#492ab1b3 index:uint64 owner_address:MsgAddressInt amount_ton:Coins amount_jetton:Coins forward_payload:(Maybe ^Cell) = InternalMsgBody;
+    unstake#492ab1b3 index:uint64 owner_address:MsgAddressInt ton_amount:Coins jetton_amount:Coins forward_payload:(Maybe ^Cell) = InternalMsgBody;
     ```
     - `index`: A 64-bit unsigned integer that identifies the unstake request.
     - `owner_address`: Address of the owner initiating the unstake.
-    - `amount_ton`: Variable length unsigned integer for the amount of TON to be unstaked.
-    - `amount_jetton`: Variable length unsigned integer for the amount of jettons associated with the unstake (currently unused).
+    - `ton_amount`: Variable length unsigned integer for the amount of TON to be unstaked.
+    - `jetton_amount`: Variable length unsigned integer for the amount of jettons associated with the unstake (currently unused).
     - `forward_payload`: Optional payload with additional information for the unstake.
     
     - If the contract's balance is sufficient to cover `withdraw_ton_amount + msg_value` (the total amount to be unstaked plus any additional transaction cost)
