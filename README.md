@@ -109,10 +109,10 @@ This section describes how to unstake.
 To unstake user needs to send message with `OP::BURN` to its **Jetton Wallet** and specify amount of bmTON to burn. The TL-B scheme of burn request is following:
 
 ```
-burn#595f07bc query_id:uint64 jetton_amount:Coins receiver_address:MsgAddressInt forward_payload:(Maybe ^Cell) = InternalMsgBody;
+burn#595f07bc query_id:uint64 jetton_amount:Coins forward_payload:(Maybe ^Cell) = InternalMsgBody;
 ```
 
-Then message with `OP::BURN_NOTIFICATION` comes from **Jetton Wallet** to **Financial** contract. **Financial** checks that sender is valid and message has enough tons for burn notification and if everything is correct it deploys **Unstake Request** with user address (`receiver_address`) and `withdraw_ton_amount` (`int withdraw_ton_amount = muldiv(ton_total_supply, withdraw_jetton_amount, jetton_total_supply)`). The TL-B scheme of burn notification is following:
+Then message with `OP::BURN_NOTIFICATION` comes from **Jetton Wallet** to **Financial** contract. **Financial** checks that sender is valid and message has enough tons for burn notification and if everything is correct it deploys **Unstake Request** with user address (`owner_address`) and `withdraw_ton_amount` (`int withdraw_ton_amount = muldiv(ton_total_supply, withdraw_jetton_amount, jetton_total_supply)`). The TL-B scheme of burn notification is following:
 
 ```
 burn_notification#7bdd97de query_id:uint64 withdraw_jetton_amount:Coins owner_address:MsgAddressInt receiver_address:MsgAddressInt forward_payload:(Maybe ^Cell) = InternalMsgBody;
@@ -249,7 +249,7 @@ _ jetton_total_supply:Coins ton_total_supply:Coins commission_total_supply:Coins
     - `query_id`: A 64-bit unsigned integer serving as the unique identifier for the request.
     - `amount`: Variable length unsigned integer specifying the amount of jettons burned.
     - `owner_address`: Address of the jetton owner.
-    - `receiver_address`: Address to receive the result of the burn operation (if applicable).
+    - `receiver_address`: Address to receive the result of the burn operation (currently unused).
     - `forward_payload`: Optional payload provided for further processing.
     - If everything is correct it sends message with the following layout:
         TL-B scheme: 
